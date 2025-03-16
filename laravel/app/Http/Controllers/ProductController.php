@@ -4,58 +4,75 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use Illuminate\Database\Eloquent\Model\Products;
+
+use App\Models\Product;
+
+
 class ProductController extends Controller
 {
-    // Retrieve all products
-    public function index()
+    
+
+
+    // Controllers can group related request handling logic into a single class. 
+    // For example, a UserController class might handle all incoming requests 
+    // related to users, including showing, creating, updating, and deleting users. 
+
+    
+//    // Get /api/products
+
+
+    public function getProducts()
     {
-        return ["message" => "Getting list of products"];
+        return response()->json(Product::all());
     }
 
-    // Retrieve active products (ordered by name, limit 10)
-    public function activeProducts()
-    {
-        $products = Product::where('active', 1)
-                           ->orderBy('name')
-                           ->take(10)
-                           ->get();  
-        return response()->json($products);
-    }
-
-    // Retrieve a product by ID or fail
-    public function show($id)
-    {
-        $product = Product::findOrFail($id);
-        return response()->json($product);
-    }
-
-    // Create a new product
-    public function store(Request $request)
+    // Post /api/products
+    public function createProduct(Request $request)
     {
         $product = Product::create($request->all());
-        return response()->json($product, 201);
+        return response()->json(["message" => "Product created successfully", "product" => $product], 201);
     }
 
-    // Update an existing product
-    public function update(Request $request, $id)
+    // Get /api/products/{productId}
+    public function getProduct($productId)
     {
-        $product = Product::findOrFail($id);
-        $product->update($request->all());
+        $product = Product::find($productId);
+
+        if (!$product) {
+            return response()->json(["message" => "Product not found"], 404);
+        }
+
         return response()->json($product);
     }
 
-    // Delete a product by ID
-    public function destroy($id)
+    // Patch /api/products/{productId}
+    public function updateProduct(Request $request, $productId)
     {
-        $product = Product::findOrFail($id);
-        $product->delete();
-        return response()->json(['message' => 'Product deleted successfully']);
+        $product = Product::find($productId);
+
+        if (!$product) {
+            return response()->json(["message" => "Product not found"], 404);
+        }
+
+        $product->update($request->all());
+
+        return response()->json(["message" => "Product updated successfully", "product" => $product]);
     }
 
-    // Get the maximum price of active products
-    public function maxPrice()
+    // Delete /api/products/{productId}
+    public function deleteProduct($productId)
     {
-        $maxPrice = Product::where('active', 1)->max('price');  
-        return response()->json(['max_price' => $maxPrice]);
+        $product = Product::find($productId);
+
+        if (!$product) {
+            return response()->json(["message" => "Product not found"], 404);
+        }
+
+        $product->delete();
+
+        return response()->json(["message" => "Product deleted successfully"]);
     }
+
+
 }
