@@ -1,7 +1,7 @@
 services:
   app:
     build: .
-    container_name: app
+    container_name: app_devops
     working_dir: /var/www
     volumes:
       - ./laravel:/var/www
@@ -10,7 +10,7 @@ services:
       - laravel
   webserver:
     image: nginx:latest
-    container_name: nginx_server
+    container_name: nginx_server_devops
     ports:
       - "8100:80"
     volumes:
@@ -20,7 +20,7 @@ services:
       - laravel
   db:
     image: mysql:8.0
-    container_name: mysql_db
+    container_name: mysql_db_devops
     ports:
       - "3307:3306"
     environment:
@@ -32,10 +32,10 @@ services:
       - laravel
   db_test:
     image: mysql:8.0
-    container_name: mysql_db_test
+    container_name: mysql_db_test_devops
     restart: always
     ports:
-      - "3308:3306"
+      - "3310:3306"
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: laravel_test
